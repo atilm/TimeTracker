@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="TimeTracker.Controls.TasksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:TimeTracker.Converters"
+             xmlns:controls="clr-namespace:TimeTracker.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        <converters:ReferenceEqualityToColorConverter x:Key="EqualityToColorConverter"/>
+    </UserControl.Resources>
+
+    <DockPanel x:Name="RootControl">
+        <DockPanel DockPanel.Dock="Top">
+            <TextBlock Text="Active Task: " DockPanel.Dock="Left"
+                       VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding TaskTimer.ElapsedTime}" DockPanel.Dock="Right"
+                       VerticalAlignment="Center"/>
+            <ToggleButton Width="25" Height="25"
+                          ToolTip="Track Time"
+                          IsChecked="{Binding TaskTimer.IsMeasuring}"
+                          IsEnabled="{Binding IsActiveTaskSelected}"
+                          DockPanel.Dock="Right">
+                <Image Source="/TimeTracker;component/Resources/playIcon.png"
+                       Margin="2"/>
+            </ToggleButton>
+            <Border BorderBrush="DarkGray" BorderThickness="0.4"
+                    Padding="0"
+                    Margin="0"
+                    VerticalAlignment="Center">
+                <TextBlock Text="{Binding ActiveTask.Name}"/>
+            </Border>
+        </DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button ToolTip="Add" Width="25" Height="25" 
+                    Command="{Binding AddCommand}">
+                <Image Source="/TimeTracker;component/Resources/addIcon.png"
+                       Margin="2"/>
+            </Button>
+            <Button ToolTip="Delete" Width="25" Height="25" 
+                    Command="{Binding DeleteCommand}">
+                <Image Source="/TimeTracker;component/Resources/cancelIcon.png"
+                       Margin="2"/>
+            </Button>
+            <Button ToolTip="Edit" Width="25" Height="25" 
+                    Command="{Binding EditCommand}">
+                <Image Source="/TimeTracker;component/Resources/editIcon.png"
+                       Margin="2"/>
+            </Button>
+        </StackPanel>
+        <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="LightBlue" Margin="2.5" Padding="2.5"
+                Visibility="{Binding Path=IsEditing, Converter={StaticResource BooleanToVisibility}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Project:"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Projects}"
+                          SelectedItem="{Binding EditingTask.Project}"
+                          DisplayMemberPath="Name"/>
+                <TextBlock Text="Task Name:" Grid.Row="1"/>
+                <controls:ClickSelectTextBox Grid.Row="1" Grid.Column="2" Text="{Binding Path=EditingTask.Name, Mode=TwoWay}"/>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                    <Button Content="OK" MinWidth="75" Command="{Binding AcceptEditingCommand}"/>
+                    <Button Content="Cancel" MinWidth="75" Command="{Binding CancelEditingCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ListView DockPanel.Dock="Top" 
+                  ItemsSource="{Binding Path=Tasks}"
+                  SelectedItem="{Binding Path=CurrentTask}"
+                  MouseDoubleClick="ListView_MouseDoubleClick"
+                  IsEnabled="{Binding IsNotEditing}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="2">
+                        <Border.BorderBrush>
+                            <SolidColorBrush>
+                                <SolidColorBrush.Color>
+                                    <MultiBinding Converter="{StaticResource EqualityToColorConverter}">
+                                        <Binding/>
+                                        <Binding RelativeSource="{RelativeSource Findancestor, AncestorType={x:Type UserControl}}" Path="DataContext.ActiveTask"/>
+                                    </MultiBinding>
+                                </SolidColorBrush.Color>
+                            </SolidColorBrush>
+                        </Border.BorderBrush>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center" Margin="5"/>
+                        <StackPanel Grid.Column="1" Margin="5">
+                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="DemiBold"/>
+                            <TextBlock Text="{Binding Project.Name}" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </DockPanel>
+</UserControl>
