@@ -19,6 +19,7 @@ namespace TimeTracker.Domain
         public virtual Int32 Id { get; protected set; }
         public virtual string Name { get; set; }
         public virtual bool IsDone { get; set; }
+        public virtual DateTime DoneDate { get; set; }
         public virtual Project Project { get; set; }
         public virtual IList<Record> Records { get; set; }
     }

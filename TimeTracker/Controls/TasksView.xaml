@@ -16,7 +16,7 @@
         <DockPanel DockPanel.Dock="Top">
             <TextBlock Text="Active Task: " DockPanel.Dock="Left"
                        VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TaskTimer.ElapsedTime}" DockPanel.Dock="Right"
+            <TextBlock Text="{Binding TaskTimer.ElapsedTime, StringFormat=hh\\:mm}" DockPanel.Dock="Right"
                        VerticalAlignment="Center"/>
             <ToggleButton Width="25" Height="25"
                           ToolTip="Track Time"
@@ -81,7 +81,8 @@
                   IsEnabled="{Binding IsNotEditing}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="2">
+                    <Border BorderThickness="0.5"
+                            Margin="2,1,2,1">
                         <Border.BorderBrush>
                             <SolidColorBrush>
                                 <SolidColorBrush.Color>

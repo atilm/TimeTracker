@@ -18,7 +18,7 @@ namespace TimeTracker.ViewModels
         private void SetUpTimer()
         {
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.5);
+            timer.Interval = TimeSpan.FromSeconds(60);
             timer.Tick += UpdateElapsedTime;
             PropertyChanged += OnPropertyChanged;
         }
@@ -26,7 +26,7 @@ namespace TimeTracker.ViewModels
         private void UpdateElapsedTime(object sender, EventArgs e)
         {
             var diff = DateTime.Now - startTime;
-            ElapsedTime = new TimeSpan(diff.Hours, diff.Minutes, diff.Seconds);
+            ElapsedTime = new TimeSpan(diff.Hours, diff.Minutes, 0);
         }
 
         private void OnPropertyChanged(

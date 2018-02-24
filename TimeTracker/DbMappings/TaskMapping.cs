@@ -12,6 +12,7 @@ namespace TimeTracker.DbMappings
             Id(x => x.Id);
             Map(x => x.Name);
             Map(x => x.IsDone);
+            Map(x => x.DoneDate);
             References(x => x.Project);
             HasMany(x => x.Records)
                 .Inverse()

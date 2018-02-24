@@ -68,22 +68,32 @@
         <DockPanel Grid.Row="4">
             <TextBlock Text="Logins and Logouts"
                        DockPanel.Dock="Top"/>
-            <DataGrid ItemsSource="{Binding SessionLoggerRecords}" 
-                      IsReadOnly="True"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False"
-                      RowHeaderWidth="0"
-                      HorizontalGridLinesBrush="LightGray"
-                      VerticalGridLinesBrush="LightGray">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Header="Time"
-                        Binding="{Binding DateTime}"/>
-                    <DataGridTextColumn
-                        Header="Event"
-                        Binding="{Binding Description}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Vertical">
+                    <Button Content="Create Record" Command="{Binding RecordFromSessionLock}"/>
+                    <Button Content="Insert Pause" IsEnabled="False"/>
+                </StackPanel>
+                <DataGrid ItemsSource="{Binding SessionLoggerRecords}"
+                          SelectedItem="{Binding CurrentLoggerRecord}"
+                          IsReadOnly="True"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          RowHeaderWidth="0"
+                          HorizontalGridLinesBrush="LightGray"
+                          VerticalGridLinesBrush="LightGray">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Header="Lock"
+                            Binding="{Binding LockTime, StringFormat=HH:mm}"/>
+                        <DataGridTextColumn
+                            Header="Unlock"
+                            Binding="{Binding UnlockTime, StringFormat=HH:mm}"/>
+                        <DataGridTextColumn
+                            Header="Duration"
+                            Binding="{Binding LockDuration, StringFormat={}{0:hh\\:mm}}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
         </DockPanel>
     </Grid>
 </UserControl>

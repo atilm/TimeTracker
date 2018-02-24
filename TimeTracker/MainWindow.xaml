@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:TimeTracker.Controls"
         mc:Ignorable="d"
-        Title="Time Tracker" Height="700" Width="400">
+        Title="Time Tracker" Height="700" Width="400"
+        Closing="Window_Closing">
     <Window.Resources>
         <Style TargetType="DatePicker">
             <Setter Property="Margin" Value="2.5"/>
@@ -14,6 +15,9 @@
             <Setter Property="Margin" Value="2.5"/>
         </Style>
         <Style TargetType="controls:ClickSelectTextBox">
+            <Setter Property="Margin" Value="2.5"/>
+        </Style>
+        <Style TargetType="controls:SpinTextBox">
             <Setter Property="Margin" Value="2.5"/>
         </Style>
         <Style TargetType="ComboBox">
@@ -43,7 +47,7 @@
     </Window.Resources>
     <TabControl>
         <TabItem Header="Tasks">
-            <controls:TasksView/>
+            <controls:TasksView x:Name="OpenTasksControl"/>
         </TabItem>
         <TabItem Header="Records">
             <controls:RecordsView/>

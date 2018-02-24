@@ -32,7 +32,7 @@ namespace TimeTracker.ViewModels
             UpdateProjectList();
         }
 
-        private void OnTasksChanged(object sender, EventArgs e)
+        protected void OnTasksChanged(object sender, EventArgs e)
         {
             LoadTasks();
         }
@@ -68,6 +68,7 @@ namespace TimeTracker.ViewModels
             if(e.PropertyName == nameof(TaskVM.IsDone))
             {
                 var task = sender as TaskVM;
+                task.DoneDate = DateTime.Today;
                 repository.SaveOrUpdate(task);
             }
         }

@@ -7,7 +7,14 @@ namespace TimeTracker
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = App.Container.GetExportedValue<MainWindowViewModel>();
+            DataContext = ViewModel = App.Container.GetExportedValue<MainWindowViewModel>();
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            OpenTasksControl.ViewModel.OnClosing();
+        }
+
+        private MainWindowViewModel ViewModel;
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TimeTracker.DomainWrappers.ObjectWrappers;
-using TimeTracker.ViewModels;
 
 namespace TimeTracker.DbMappings
 {
@@ -11,6 +10,7 @@ namespace TimeTracker.DbMappings
         event EventHandler RaiseProjectsChangedEvent;
         event EventHandler RaiseTasksChangedEvent;
         event EventHandler RaiseRecordsChangedEvent;
+        event EventHandler RaiseAppDataChangedEvent;
 
         void SaveOrUpdate(TimeTrackerDataVM appData);
         TimeTrackerDataVM GetAppData();

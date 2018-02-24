@@ -44,14 +44,18 @@
                                 <Setter Property="Background" Value="{x:Null}" />
                                 <Setter Property="BorderBrush" Value="{x:Null}" />
                             </Trigger>
+                            <DataTrigger Binding="{Binding IsResult}" Value="True">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </ResourceDictionary>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Project" Binding="{Binding Project.Name}" />
-                <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" />
-                <DataGridTextColumn Header="Duration / h" Binding="{Binding DurationInHours}" />
+                <DataGridTextColumn Header="Project" Binding="{Binding Title}" />
+                <DataGridTextColumn Header="Time" Binding="{Binding Duration, StringFormat=hh\\:mm}" />
+                <DataGridTextColumn Header="Hours" Binding="{Binding DurationInHours}" />
+                <DataGridTextColumn Header="Scaled Hours" Binding="{Binding ScaledDurationInHours}" />
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

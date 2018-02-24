@@ -46,6 +46,17 @@ namespace TimeTracker.DomainWrappers.ObjectWrappers
             }
         }
 
+        public DateTime DoneDate
+        {
+            get { return DomainObject.DoneDate; }
+
+            set
+            {
+                DomainObject.DoneDate = value;
+                RaisePropertyChangedEvent("DoneDate");
+            }
+        }
+
         public ProjectVM Project
         {
             get { return m_project; }

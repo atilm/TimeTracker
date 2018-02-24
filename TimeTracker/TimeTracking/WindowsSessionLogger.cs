@@ -1,7 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Linq;
 
 namespace TimeTracker.TimeTracking
 {
@@ -9,25 +9,44 @@ namespace TimeTracker.TimeTracking
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class WindowsSessionLogger
     {
-        public WindowsSessionLogger()
+        [ImportingConstructor]
+        public WindowsSessionLogger(SessionLockReporter sessionLockReporter)
         {
-            Records = new ObservableCollection<SessionLoggingRecord>();
+            SetSessionLockReporter(sessionLockReporter);
 
-            SystemEvents.SessionSwitch += 
-                new SessionSwitchEventHandler(OnSessionSwitched);
+            Records = new ObservableCollection<SessionLockRecord>();
         }
 
-        public ObservableCollection<SessionLoggingRecord> Records { get; set; }
+        public ObservableCollection<SessionLockRecord> Records { get; set; }
 
-        private void OnSessionSwitched(object sender, SessionSwitchEventArgs e)
+        private void SetSessionLockReporter(SessionLockReporter sessionLockReporter)
         {
-            var now = DateTime.Now;
+            this.sessionLockReporter = sessionLockReporter;
+            this.sessionLockReporter.SessionLockedEvent += LogLockedEvent;
+            this.sessionLockReporter.SessionUnlockedEvent += LogUnlockedEvent;
+        }
 
-            Records.Add(new SessionLoggingRecord
+        private void LogLockedEvent(object sender, SessionLockEventArgs e)
+        {
+            Records.Insert(0, new SessionLockRecord
             {
-                DateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Day, now.Second),
-                Description = e.Reason.ToString()
+                LockTime = e.DateTime
             });
         }
+
+        private void LogUnlockedEvent(object sender, SessionLockEventArgs e)
+        {
+            if (Records.Count == 0)
+                return;
+
+            var openRecord = Records.First();
+
+            if (openRecord.LockTime == null)
+                return;
+
+            openRecord.UnlockTime = e.DateTime;
+        }
+
+        private SessionLockReporter sessionLockReporter;
     }
 }

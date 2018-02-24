@@ -14,6 +14,7 @@ namespace TimeTracker.ViewModels
         public DoneTasksViewModel(IProjectDataRepository repository)
             : base(repository)
         {
+            repository.RaiseAppDataChangedEvent += OnTasksChanged;
         }
 
         protected override ObservableCollection<TaskVM> GetTasksFromRepository()

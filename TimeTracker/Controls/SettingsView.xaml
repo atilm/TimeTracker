@@ -10,6 +10,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -20,6 +21,11 @@
                                Value="{Binding HoursPerDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
                                Min="0"
                                Max="10"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Done Tasks from n days: "/>
+            <local:SpinTextBox Grid.Row="1" Grid.Column="1"
+                               Value="{Binding DaysIntoPast, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"
+                               Min="0"
+                               Max="10000"/>
         </Grid>
     </StackPanel>
 </UserControl>

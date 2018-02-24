@@ -26,6 +26,16 @@ namespace TimeTracker.ViewModels
             }
         }
 
+        public int DaysIntoPast
+        {
+            get { return appData.DaysIntoPast; }
+            set
+            {
+                appData.DaysIntoPast = value;
+                repository.SaveOrUpdate(appData);
+            }
+        }
+
         private TimeTrackerDataVM appData;
         private IProjectDataRepository repository;
     }

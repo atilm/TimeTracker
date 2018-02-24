@@ -36,6 +36,7 @@ namespace TimeTracker.DbMappings
         public event EventHandler RaiseProjectsChangedEvent;
         public event EventHandler RaiseTasksChangedEvent;
         public event EventHandler RaiseRecordsChangedEvent;
+        public event EventHandler RaiseAppDataChangedEvent;
 
         public void SaveOrUpdate(TimeTrackerDataVM appData)
         {
@@ -45,6 +46,7 @@ namespace TimeTracker.DbMappings
             {
                 session.SaveOrUpdate(appData.DomainObject);
                 transaction.Commit();
+                OnRaiseAppDataChangedEvent();
             }
         }
 
@@ -135,8 +137,15 @@ namespace TimeTracker.DbMappings
         {
             AssureSession();
 
+            var settings = GetAppData();
+            var earliestDate = DateTime.Now.Date - TimeSpan.FromDays(settings.DaysIntoPast);
+            var invalidDate = new DateTime(1900, 01, 01);
+
             var tasks = session.Query<Task>()
-                .Where(t => t.IsDone)
+                .Where(t => t.IsDone &&
+                       (t.DoneDate >= earliestDate ||
+                        t.DoneDate < invalidDate ))
+                .OrderByDescending(t => t.DoneDate)
                 .ToList();
 
             return CreateObservableCollection(tasks);
@@ -269,6 +278,11 @@ namespace TimeTracker.DbMappings
         protected virtual void OnRaiseRecordsChangedEvent()
         {
             RaiseRecordsChangedEvent?.Invoke(this, null);
+        }
+
+        protected virtual void OnRaiseAppDataChangedEvent()
+        {
+            RaiseAppDataChangedEvent?.Invoke(this, null);
         }
 
         private ISession session;

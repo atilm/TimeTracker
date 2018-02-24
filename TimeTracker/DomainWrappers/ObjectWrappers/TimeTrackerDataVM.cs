@@ -43,5 +43,15 @@ namespace TimeTracker.DomainWrappers.ObjectWrappers
                 RaisePropertyChangedEvent(nameof(OvertimeHours));
             }
         }
+
+        public int DaysIntoPast
+        {
+            get { return DomainObject.DaysIntoPast; }
+            set
+            {
+                DomainObject.DaysIntoPast = value;
+                RaisePropertyChangedEvent(nameof(DaysIntoPast));
+            }
+        }
     }
 }

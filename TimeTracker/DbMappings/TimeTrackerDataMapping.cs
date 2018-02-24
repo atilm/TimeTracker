@@ -12,6 +12,7 @@ namespace TimeTracker.DbMappings
             Id(x => x.Id);
             Map(x => x.HoursPerDay);
             Map(x => x.OvertimeHours);
+            Map(x => x.DaysIntoPast);
         }
     }
 }

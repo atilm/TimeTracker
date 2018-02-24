@@ -2,9 +2,8 @@
 
 namespace TimeTracker.TimeTracking
 {
-    public class SessionLoggingRecord
+    public class SessionLockEventArgs : EventArgs
     {
         public DateTime DateTime { get; set; }
-        public string Description { get; set; }
     }
 }

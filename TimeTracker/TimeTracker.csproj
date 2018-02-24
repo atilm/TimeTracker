@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TimeTracker.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
@@ -115,11 +118,14 @@
     <Compile Include="DomainWrappers\ObjectWrappers\TaskVM.cs" />
     <Compile Include="DomainWrappers\ObjectWrappers\TimeTrackerDataVM.cs" />
     <Compile Include="Domain\TimeTrackerData.cs" />
-    <Compile Include="TimeTracking\SessionLoggingRecord.cs" />
+    <Compile Include="TimeTracking\SessionLockEventArgs.cs" />
+    <Compile Include="TimeTracking\SessionLockRecord.cs" />
+    <Compile Include="TimeTracking\SessionLockReporter.cs" />
     <Compile Include="TimeTracking\WindowsSessionLogger.cs" />
     <Compile Include="ViewModels\DoneTasksViewModel.cs" />
     <Compile Include="ViewModels\EditingStatesViewModel.cs" />
     <Compile Include="ViewModels\OpenTasksViewModel.cs" />
+    <Compile Include="ViewModels\ProjectReportItem.cs" />
     <Compile Include="ViewModels\ProjectsViewModel.cs" />
     <Compile Include="ViewModels\RecordsViewModel.cs" />
     <Compile Include="ViewModels\ReportItem.cs" />
@@ -216,6 +222,9 @@
     <Resource Include="Resources\cancelIcon.png" />
     <Resource Include="Resources\editIcon.png" />
     <Resource Include="Resources\playIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TimeTracker.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" />

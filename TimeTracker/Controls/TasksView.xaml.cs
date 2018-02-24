@@ -16,14 +16,12 @@ namespace TimeTracker.Controls
 
         void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var doubleClickedTask = ((FrameworkElement)e.OriginalSource).DataContext as TaskVM;
-
-            if(doubleClickedTask != null)
+            if (((FrameworkElement)e.OriginalSource).DataContext is TaskVM doubleClickedTask)
             {
                 ViewModel.SwitchActiveTask(doubleClickedTask);
             }
         }
 
-        private OpenTasksViewModel ViewModel;
+        public OpenTasksViewModel ViewModel;
     }
 }

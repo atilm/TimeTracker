@@ -8,5 +8,6 @@ namespace TimeTracker.Domain
         public virtual Int32 Id { get; protected set; }
         public virtual double HoursPerDay { get; set; }
         public virtual double OvertimeHours { get; set; }
+        public virtual int DaysIntoPast { get; set; }
     }
 }

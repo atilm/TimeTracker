@@ -35,6 +35,9 @@ namespace TimeTracker.ViewModels
             AddCommand = new DelegateCommand(AddRecordToList);
             DeleteCommand = new AutoCanExecuteDelegateCommand(DeleteRecord, CanDeleteRecord);
             SaveAllCommand = new AutoCanExecuteDelegateCommand(SaveAll, CanSave);
+            RecordFromSessionLock = new AutoCanExecuteDelegateCommand(
+                CreateRecordFromSessionLock,
+                CanApplySessionLog);
 
             SelectedDate = DateTime.Today;
             UpdateRecordList();
@@ -44,6 +47,7 @@ namespace TimeTracker.ViewModels
         public ICommand AddCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand SaveAllCommand { get; set; }
+        public ICommand RecordFromSessionLock { get; set; }
 
         public RecordVM CurrentRecord
         {
@@ -57,9 +61,15 @@ namespace TimeTracker.ViewModels
             set { SetProperty(ref selectedDate, value); }
         }
 
-        public ObservableCollection<SessionLoggingRecord> SessionLoggerRecords
+        public ObservableCollection<SessionLockRecord> SessionLoggerRecords
         {
             get { return sessionLogger.Records; }
+        }
+
+        public SessionLockRecord CurrentLoggerRecord
+        {
+            get { return currentLoggerRecord; }
+            set { SetProperty(ref currentLoggerRecord, value); }
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs args)
@@ -116,19 +126,33 @@ namespace TimeTracker.ViewModels
         private void ReplaceParentTasksWithObjectsFromTaskList()
         {
             foreach (var record in Records)
-                record.Task = Tasks.Single(t => t.Id == record.Task.Id);
+            {
+                var task = Tasks.SingleOrDefault(t => t.Id == record.Task.Id);
+
+                if (task != null)
+                    record.Task = task;
+            }
+                
         }
 
         private void AddRecordToList()
+        {
+            AddRecordToList(
+                Tasks.First(),
+                SelectedDate + DateTime.Now.TimeOfDay,
+                SelectedDate + DateTime.Now.TimeOfDay);
+        }
+
+        private void AddRecordToList(TaskVM task, DateTime start, DateTime stop)
         {
             if (Tasks == null || Tasks.Count == 0)
                 return;
 
             var record = new RecordVM
             {
-                Task = Tasks.First(),
-                Start = SelectedDate + DateTime.Now.TimeOfDay,
-                Stop = SelectedDate + DateTime.Now.TimeOfDay
+                Task = task,
+                Start = start,
+                Stop = stop
             };
 
             repository.SaveOrUpdate(record);
@@ -157,12 +181,40 @@ namespace TimeTracker.ViewModels
         {
             repository.SaveOrUpdate(Records);
         }
-        
+
+        private void CreateRecordFromSessionLock()
+        {
+            var record = Records.FirstOrDefault(r =>
+            r.Start < CurrentLoggerRecord.LockTime &&
+            r.Stop > CurrentLoggerRecord.UnlockTime);
+
+            if (record == null)
+                return;
+
+            var recordIndex = Records.IndexOf(record);
+            var lockTime = (DateTime)CurrentLoggerRecord.LockTime;
+            var unlockTime = (DateTime)CurrentLoggerRecord.UnlockTime;
+
+            AddRecordToList(Tasks.First(), lockTime, unlockTime);
+            AddRecordToList(record.Task, unlockTime, record.Stop);
+
+            record.Stop = lockTime;
+            repository.SaveOrUpdate(record);
+
+            SessionLoggerRecords.Remove(CurrentLoggerRecord);
+        }
+
+        private bool CanApplySessionLog()
+        {
+            return CurrentLoggerRecord != null;
+        }
+
         public ObservableCollection<RecordVM> Records { get; protected set; }
         public ObservableCollection<TaskVM> Tasks { get; protected set; }
 
         private IProjectDataRepository repository;
         private WindowsSessionLogger sessionLogger;
+        private SessionLockRecord currentLoggerRecord;
         private RecordVM currentRecord;
         private DateTime selectedDate;
     }

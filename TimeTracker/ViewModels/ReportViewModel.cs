@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using TimeTracker.DbMappings;
+using TimeTracker.DomainWrappers.ObjectWrappers;
 
 namespace TimeTracker.ViewModels
 {
@@ -60,7 +61,13 @@ namespace TimeTracker.ViewModels
             var records = repository.GetRecords(SelectedDate);
 
             ProjectList.Clear();
+            FillProjectsList(records);
+            CalculateScaledDuration();
+            AddResultRow();
+        }
 
+        private void FillProjectsList(ObservableCollection<RecordVM> records)
+        {
             foreach (var record in records)
             {
                 var project = record.Task.Project;
@@ -70,13 +77,46 @@ namespace TimeTracker.ViewModels
 
                 if (reportItem == null)
                 {
-                    reportItem = new ReportItem();
-                    reportItem.Project = project;
+                    reportItem = new ProjectReportItem(project);
                     ProjectList.Add(reportItem);
                 }
 
                 reportItem.Duration += record.Duration;
             }
+        }
+
+        private void CalculateScaledDuration()
+        {
+            var summedHours = ProjectList.Sum(p => p.DurationInHours);
+            var scalingFactor = 8.0 / summedHours;
+            
+            foreach(var reportItem in ProjectList)
+            {
+                reportItem.ScaledDurationInHours = reportItem.DurationInHours * scalingFactor;
+            }
+        }
+
+        private void AddResultRow()
+        {
+            if (ProjectList.Count == 0)
+                return;
+
+            var summedDuration = TimeSpan.Zero;
+            var summedScaledDuration = 0.0;
+            
+            foreach(var item in ProjectList)
+            {
+                summedDuration += item.Duration;
+                summedScaledDuration += item.ScaledDurationInHours;
+            }
+
+            ProjectList.Add(new ReportItem
+            {
+                IsResult = true,
+                Title = "Sum: ",
+                Duration = summedDuration,
+                ScaledDurationInHours = summedScaledDuration
+            });
         }
 
         private IProjectDataRepository repository;

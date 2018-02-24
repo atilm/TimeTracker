@@ -70,10 +70,12 @@ namespace TimeTracker.ViewModels
         {
             base.LoadTasks();
 
-            if (Tasks.Count == 0)
+            if (Tasks.Count == 0 ||
+                ActiveTask == null)
                 return;
-            
-            ActiveTask = Tasks.First();
+
+            if (!Tasks.Any(t => t.Id == ActiveTask.Id))
+                ActiveTask = null;
         }
 
         public TaskVM ActiveTask
@@ -99,6 +101,11 @@ namespace TimeTracker.ViewModels
             }
 
             ActiveTask = task;
+        }
+
+        internal void OnClosing()
+        {
+            TaskTimer.IsMeasuring = false;
         }
 
         public TaskTimer TaskTimer { get; protected set; }

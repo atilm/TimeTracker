@@ -58,19 +58,31 @@
                   IsEnabled="{Binding IsNotEditing}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center" Margin="5"/>
-                        <StackPanel Grid.Column="1" Margin="5">
-                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="DemiBold"/>
-                            <TextBlock Text="{Binding Project.Name}" FontSize="12"/>
-                        </StackPanel>
-                    </Grid>
+                    <Border BorderThickness="0.5"
+                            BorderBrush="LightGray"
+                            Margin="2,1,2,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center" Margin="5"/>
+                            <StackPanel Grid.Column="1" Margin="5">
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" FontSize="14" FontWeight="DemiBold"/>
+                                <TextBlock Text="{Binding Project.Name}" FontSize="12"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="5"
+                                       Text="{Binding DoneDate, StringFormat='{}{0:dd.MM.yyyy}'}" FontSize="10"/>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </DockPanel>
 </UserControl>
