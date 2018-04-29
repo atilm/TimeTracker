@@ -79,6 +79,8 @@
   <ItemGroup>
     <Compile Include="DbTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordsViewModelTests.cs" />
+    <Compile Include="Utilities\RepositoryTools.cs" />
     <Compile Include="WindowsSessionLoggerTests.cs" />
   </ItemGroup>
   <ItemGroup>

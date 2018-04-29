@@ -35,8 +35,11 @@ namespace TimeTracker.ViewModels
             AddCommand = new DelegateCommand(AddRecordToList);
             DeleteCommand = new AutoCanExecuteDelegateCommand(DeleteRecord, CanDeleteRecord);
             SaveAllCommand = new AutoCanExecuteDelegateCommand(SaveAll, CanSave);
-            RecordFromSessionLock = new AutoCanExecuteDelegateCommand(
+            RecordFromSessionLockCommand = new AutoCanExecuteDelegateCommand(
                 CreateRecordFromSessionLock,
+                CanApplySessionLog);
+            PauseFromSessionLockCommand = new AutoCanExecuteDelegateCommand(
+                CreatePauseFromSessionLock,
                 CanApplySessionLog);
 
             SelectedDate = DateTime.Today;
@@ -47,7 +50,8 @@ namespace TimeTracker.ViewModels
         public ICommand AddCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand SaveAllCommand { get; set; }
-        public ICommand RecordFromSessionLock { get; set; }
+        public ICommand RecordFromSessionLockCommand { get; set; }
+        public ICommand PauseFromSessionLockCommand { get; set; }
 
         public RecordVM CurrentRecord
         {
@@ -103,7 +107,7 @@ namespace TimeTracker.ViewModels
                 record.PropertyChanged += OnRecordChanged;
             }
 
-            Records.AddRange(records);
+            Records.AddRange(records.OrderBy(r => r.Stop));
         }
 
         private void OnRecordChanged(object sender, PropertyChangedEventArgs e)
@@ -184,24 +188,89 @@ namespace TimeTracker.ViewModels
 
         private void CreateRecordFromSessionLock()
         {
-            var record = Records.FirstOrDefault(r =>
-            r.Start < CurrentLoggerRecord.LockTime &&
-            r.Stop > CurrentLoggerRecord.UnlockTime);
+            var record = GetRecordConcernedByLock(CurrentLoggerRecord);
 
             if (record == null)
                 return;
 
             var recordIndex = Records.IndexOf(record);
+            var originalStart = record.Start;
+            var originalStop = record.Stop;
             var lockTime = (DateTime)CurrentLoggerRecord.LockTime;
             var unlockTime = (DateTime)CurrentLoggerRecord.UnlockTime;
 
-            AddRecordToList(Tasks.First(), lockTime, unlockTime);
-            AddRecordToList(record.Task, unlockTime, record.Stop);
+            if (lockTime == originalStart &&
+                unlockTime == originalStop)
+            {
+                record.Task = Tasks.First();
+            }
+            else
+            {
+                AddRecordToList(Tasks.First(), lockTime, unlockTime);
 
-            record.Stop = lockTime;
+                if (lockTime > originalStart)
+                {
+                    record.Stop = lockTime;
+                }
+
+                if (unlockTime < originalStop)
+                {
+                    if (record.Stop < unlockTime)
+                        AddRecordToList(record.Task, unlockTime, originalStop);
+                    else
+                        record.Start = unlockTime;
+                }
+            }
+
             repository.SaveOrUpdate(record);
 
             SessionLoggerRecords.Remove(CurrentLoggerRecord);
+        }
+
+        private void CreatePauseFromSessionLock()
+        {
+            var record = GetRecordConcernedByLock(CurrentLoggerRecord);
+
+            if (record == null)
+                return;
+
+            var lockTime = (DateTime)CurrentLoggerRecord.LockTime;
+            var unlockTime = (DateTime)CurrentLoggerRecord.UnlockTime;
+
+            var recordBeforePause = new RecordVM
+            {
+                Task = record.Task,
+                Start = record.Start,
+                Stop = lockTime
+            };
+
+            var recordAfterPause = new RecordVM
+            {
+                Task = record.Task,
+                Start = unlockTime,
+                Stop = record.Stop
+            };
+
+            var task = record.Task;
+            var originalRecord = task.Records.Single(r => r.Id == record.Id);
+            task.Records.Remove(originalRecord);
+
+            if (recordBeforePause.Duration.TotalMinutes >= 1)
+                task.Records.Add(recordBeforePause);
+
+            if (recordAfterPause.Duration.TotalMinutes >= 1)
+                task.Records.Add(recordAfterPause);
+
+            repository.SaveOrUpdate(task);
+            SessionLoggerRecords.Remove(CurrentLoggerRecord);
+            UpdateRecordList();
+        }
+
+        private RecordVM GetRecordConcernedByLock(SessionLockRecord lockRecord)
+        {
+            return Records.FirstOrDefault(r =>
+            r.Start <= lockRecord.LockTime &&
+            r.Stop >= lockRecord.UnlockTime);
         }
 
         private bool CanApplySessionLog()

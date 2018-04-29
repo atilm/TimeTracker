@@ -70,8 +70,8 @@
                        DockPanel.Dock="Top"/>
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Vertical">
-                    <Button Content="Create Record" Command="{Binding RecordFromSessionLock}"/>
-                    <Button Content="Insert Pause" IsEnabled="False"/>
+                    <Button Content="Create Record" Command="{Binding RecordFromSessionLockCommand}"/>
+                    <Button Content="Insert Pause" Command="{Binding PauseFromSessionLockCommand}"/>
                 </StackPanel>
                 <DataGrid ItemsSource="{Binding SessionLoggerRecords}"
                           SelectedItem="{Binding CurrentLoggerRecord}"

@@ -9,6 +9,10 @@ namespace TimeTracker.TimeTracking
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class WindowsSessionLogger
     {
+        public WindowsSessionLogger() : this(null)
+        {
+        }
+
         [ImportingConstructor]
         public WindowsSessionLogger(SessionLockReporter sessionLockReporter)
         {
@@ -17,10 +21,13 @@ namespace TimeTracker.TimeTracking
             Records = new ObservableCollection<SessionLockRecord>();
         }
 
-        public ObservableCollection<SessionLockRecord> Records { get; set; }
+        virtual public ObservableCollection<SessionLockRecord> Records { get; set; }
 
         private void SetSessionLockReporter(SessionLockReporter sessionLockReporter)
         {
+            if (sessionLockReporter == null)
+                return;
+
             this.sessionLockReporter = sessionLockReporter;
             this.sessionLockReporter.SessionLockedEvent += LogLockedEvent;
             this.sessionLockReporter.SessionUnlockedEvent += LogUnlockedEvent;
