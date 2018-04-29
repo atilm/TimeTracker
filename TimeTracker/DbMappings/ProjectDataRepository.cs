@@ -46,8 +46,8 @@ namespace TimeTracker.DbMappings
             {
                 session.SaveOrUpdate(appData.DomainObject);
                 transaction.Commit();
-                OnRaiseAppDataChangedEvent();
             }
+            OnRaiseAppDataChangedEvent();
         }
 
         public TimeTrackerDataVM GetAppData()
@@ -66,8 +66,9 @@ namespace TimeTracker.DbMappings
             {
                 session.SaveOrUpdate(project.DomainObject);
                 transaction.Commit();
-                OnRaiseProjectsChangedEvent();
             }
+
+            OnRaiseProjectsChangedEvent();
         }
 
         public void Delete(ProjectVM project)
@@ -77,9 +78,10 @@ namespace TimeTracker.DbMappings
             using (var transaction = session.BeginTransaction())
             {
                 session.Delete(project.DomainObject);
-                transaction.Commit();
-                OnRaiseProjectsChangedEvent();
+                transaction.Commit(); 
             }
+
+            OnRaiseProjectsChangedEvent();
         }
 
         public ObservableCollection<ProjectVM> GetProjects()
@@ -106,8 +108,9 @@ namespace TimeTracker.DbMappings
             {
                 session.SaveOrUpdate(task.DomainObject);
                 transaction.Commit();
-                OnRaiseTasksChangedEvent();
             }
+
+            OnRaiseTasksChangedEvent();
         }
 
         public void Delete(TaskVM task)
@@ -116,10 +119,13 @@ namespace TimeTracker.DbMappings
 
             using (var transaction = session.BeginTransaction())
             {
+                task.Project.RemoveTask(task);
+                task.Project = null;
                 session.Delete(task.DomainObject);
                 transaction.Commit();
-                OnRaiseTasksChangedEvent();
             }
+
+            OnRaiseTasksChangedEvent();
         }
 
         public ObservableCollection<TaskVM> GetOpenTasks()
@@ -170,8 +176,9 @@ namespace TimeTracker.DbMappings
             {
                 session.SaveOrUpdate(record.DomainObject);
                 transaction.Commit();
-                OnRaiseRecordsChangedEvent();
             }
+
+            OnRaiseRecordsChangedEvent();
         }
 
         public void SaveOrUpdate(ICollection<RecordVM> records)
@@ -184,8 +191,9 @@ namespace TimeTracker.DbMappings
                     session.SaveOrUpdate(record.DomainObject);
 
                 transaction.Commit();
-                OnRaiseRecordsChangedEvent();
             }
+
+            OnRaiseRecordsChangedEvent();
         }
 
         public void Delete(RecordVM record)
@@ -194,10 +202,12 @@ namespace TimeTracker.DbMappings
 
             using (var transaction = session.BeginTransaction())
             {
+                record.Task.RemoveRecord(record);
                 session.Delete(record.DomainObject);
                 transaction.Commit();
-                OnRaiseRecordsChangedEvent();
             }
+
+            OnRaiseRecordsChangedEvent();
         }
 
         public ObservableCollection<RecordVM> GetRecords(DateTime date)

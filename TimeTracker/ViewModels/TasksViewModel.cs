@@ -12,6 +12,7 @@ namespace TimeTracker.ViewModels
         public TasksViewModel(IProjectDataRepository repository)
         {
             this.repository = repository;
+            this.repository.RaiseRecordsChangedEvent += OnRecordsChanged;
 
             EditingTask = new TaskVM();
             Tasks = new ObservableCollection<TaskVM>();
@@ -19,6 +20,11 @@ namespace TimeTracker.ViewModels
             UpdateProjectList();
             LoadTasks();
             AttachEvents();
+        }
+
+        private void OnRecordsChanged(object sender, EventArgs e)
+        {
+            LoadTasks();
         }
 
         private void AttachEvents()
@@ -123,7 +129,8 @@ namespace TimeTracker.ViewModels
 
         protected override bool CanDelete()
         {
-            return CurrentTask != null;
+            return CurrentTask != null &&
+                   CurrentTask.Records.Count == 0;
         }
 
         protected override void Delete()
@@ -145,7 +152,7 @@ namespace TimeTracker.ViewModels
                 CreateNewTask();
 
             CopyEditContentsToCurrentTask();
-            repository.SaveOrUpdate(CurrentTask);
+            repository.SaveOrUpdate(CurrentTask.Project);
             ClearEditingTask();
         }
 
@@ -159,6 +166,7 @@ namespace TimeTracker.ViewModels
         {
             CurrentTask.Project = EditingTask.Project;
             CurrentTask.Name = EditingTask.Name;
+            CurrentTask.Project.AddTask(CurrentTask);
         }
 
         private void CreateNewTask()

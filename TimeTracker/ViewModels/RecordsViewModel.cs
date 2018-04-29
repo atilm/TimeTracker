@@ -92,10 +92,7 @@ namespace TimeTracker.ViewModels
         private void UpdateRecordList()
         {
             ClearRecordList();
-            Tasks.Clear();
-
-            Tasks.AddRange(repository.GetOpenTasks());
-            Tasks.AddRange(repository.GetDoneTasks());
+            UpdateTasks();
             AddRecords(repository.GetRecords(SelectedDate));
             ReplaceParentTasksWithObjectsFromTaskList();
         }
@@ -141,10 +138,21 @@ namespace TimeTracker.ViewModels
 
         private void AddRecordToList()
         {
+            UpdateTasks();
+            if (Tasks == null || Tasks.Count == 0)
+                return;
+
             AddRecordToList(
                 Tasks.First(),
                 SelectedDate + DateTime.Now.TimeOfDay,
                 SelectedDate + DateTime.Now.TimeOfDay);
+        }
+
+        private void UpdateTasks()
+        {
+            Tasks.Clear();
+            Tasks.AddRange(repository.GetOpenTasks());
+            Tasks.AddRange(repository.GetDoneTasks());
         }
 
         private void AddRecordToList(TaskVM task, DateTime start, DateTime stop)
@@ -159,7 +167,9 @@ namespace TimeTracker.ViewModels
                 Stop = stop
             };
 
-            repository.SaveOrUpdate(record);
+            task.AddRecord(record);
+
+            repository.SaveOrUpdate(task);
 
             UpdateRecordList();
         }

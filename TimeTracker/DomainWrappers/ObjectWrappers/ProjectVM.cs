@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TimeTracker.Domain;
 using TimeTracker.DomainWrappers.CollectionWrappers;
 using TimeTracker.WrappingFramework;
@@ -76,6 +77,13 @@ namespace TimeTracker.DomainWrappers.ObjectWrappers
         {
             task.Project = this;
             Tasks.Add(task);
+        }
+
+        public void RemoveTask(TaskVM task)
+        {
+            var originalTask = Tasks.FirstOrDefault(t => t.Id == task.Id);
+            if (originalTask != null)
+                Tasks.Remove(originalTask);
         }
 
         private TasksVM m_tasks;

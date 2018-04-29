@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using TimeTracker.DbMappings;
 using TimeTracker.DomainWrappers.ObjectWrappers;
@@ -14,10 +15,36 @@ namespace TimeTracker.ViewModels
         public ProjectsViewModel(IProjectDataRepository repository)
         {
             Repository = repository;
+            Repository.RaiseProjectsChangedEvent += OnProjectsChanged;
+            Repository.RaiseTasksChangedEvent += OnTasksChanged;
 
             Projects = new ObservableCollection<ProjectVM>();
             EditingProject = new ProjectVM();
             LoadProjects();
+        }
+
+        private void OnProjectsChanged(object sender, EventArgs e)
+        {
+            UpdateProjectList();
+        }
+
+        private void OnTasksChanged(object sender, EventArgs e)
+        {
+            UpdateProjectList();
+        }
+
+        private void UpdateProjectList()
+        {
+            ClearProjectList();
+            LoadProjects();
+        }
+
+        private void ClearProjectList()
+        {
+            foreach(var project in Projects)
+                project.PropertyChanged -= Project_PropertyChanged;
+
+            Projects.Clear();
         }
 
         private void LoadProjects()
@@ -34,7 +61,7 @@ namespace TimeTracker.ViewModels
             project.PropertyChanged += Project_PropertyChanged;
         }
 
-        private void Project_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Project_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if(e.PropertyName == nameof(ProjectVM.IsActive))
             {
@@ -65,7 +92,8 @@ namespace TimeTracker.ViewModels
 
         protected override bool CanDelete()
         {
-            return CurrentProject != null;
+            return CurrentProject != null &&
+                   CurrentProject.Tasks.Count == 0;
         }
 
         protected override bool CanEdit()
