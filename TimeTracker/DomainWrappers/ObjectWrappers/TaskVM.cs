@@ -25,6 +25,16 @@ namespace TimeTracker.DomainWrappers.ObjectWrappers
             get { return DomainObject.Id; }
         }
 
+        public bool IsActive
+        {
+            get { return isActive; }
+            set
+            {
+                isActive = value;
+                RaisePropertyChangedEvent("IsActive");
+            }
+        }
+
         public string Name
         {
             get { return DomainObject.Name; }
@@ -111,5 +121,6 @@ namespace TimeTracker.DomainWrappers.ObjectWrappers
 
         private ProjectVM m_project;
         private RecordsVM m_records;
+        private bool isActive;
     }
 }

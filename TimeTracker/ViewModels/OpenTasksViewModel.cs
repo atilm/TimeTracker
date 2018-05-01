@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using TimeTracker.DbMappings;
 using TimeTracker.DomainWrappers.ObjectWrappers;
 
@@ -74,8 +73,10 @@ namespace TimeTracker.ViewModels
                 ActiveTask == null)
                 return;
 
-            if (!Tasks.Any(t => t.Id == ActiveTask.Id))
-                ActiveTask = null;
+            ActiveTask = Tasks.FirstOrDefault(t => t.Id == ActiveTask.Id);
+
+            if (ActiveTask != null)
+                ActiveTask.IsActive = true;
         }
 
         public TaskVM ActiveTask
@@ -83,9 +84,19 @@ namespace TimeTracker.ViewModels
             get { return activeTask; }
             set
             {
+                SwitchActiveTaskTo(value);
                 SetProperty(ref activeTask, value);
                 RaisePropertyChanged(nameof(IsActiveTaskSelected));
             }
+        }
+
+        private void SwitchActiveTaskTo(TaskVM value)
+        {
+            if(activeTask != null)
+                activeTask.IsActive = false;
+
+            if(value != null)
+                value.IsActive = true;
         }
 
         public bool IsActiveTaskSelected

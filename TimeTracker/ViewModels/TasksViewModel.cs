@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
 using System.Linq;
 using TimeTracker.DbMappings;
 using TimeTracker.DomainWrappers.ObjectWrappers;

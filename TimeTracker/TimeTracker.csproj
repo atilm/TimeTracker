@@ -108,7 +108,7 @@
     <Compile Include="Controls\TimePicker.xaml.cs">
       <DependentUpon>TimePicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\ReferenceEqualityToColorConverter.cs" />
+    <Compile Include="Converters\BoolToColorConverter.cs" />
     <Compile Include="DbMappings\IProjectDataRepository.cs" />
     <Compile Include="DbMappings\TimeTrackerDataMapping.cs" />
     <Compile Include="DomainWrappers\CollectionWrappers\RecordsVM.cs" />

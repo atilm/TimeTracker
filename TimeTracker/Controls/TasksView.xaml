@@ -9,47 +9,41 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
-        <converters:ReferenceEqualityToColorConverter x:Key="EqualityToColorConverter"/>
+        <converters:BoolToColorConverter x:Key="IsActiveToColorConverter"/>
     </UserControl.Resources>
 
     <DockPanel x:Name="RootControl">
         <DockPanel DockPanel.Dock="Top">
-            <TextBlock Text="Active Task: " DockPanel.Dock="Left"
-                       VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding TaskTimer.ElapsedTime, StringFormat=hh\\:mm}" DockPanel.Dock="Right"
-                       VerticalAlignment="Center"/>
-            <ToggleButton Width="25" Height="25"
-                          ToolTip="Track Time"
-                          IsChecked="{Binding TaskTimer.IsMeasuring}"
-                          IsEnabled="{Binding IsActiveTaskSelected}"
-                          DockPanel.Dock="Right">
-                <Image Source="/TimeTracker;component/Resources/playIcon.png"
-                       Margin="2"/>
-            </ToggleButton>
-            <Border BorderBrush="DarkGray" BorderThickness="0.4"
-                    Padding="0"
-                    Margin="0"
-                    VerticalAlignment="Center">
-                <TextBlock Text="{Binding ActiveTask.Name}"/>
-            </Border>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <ToggleButton Width="25" Height="25"
+                              ToolTip="Track Time"
+                              IsChecked="{Binding TaskTimer.IsMeasuring}"
+                              IsEnabled="{Binding IsActiveTaskSelected}">
+                    <Image Source="/TimeTracker;component/Resources/playIcon.png"
+                           Margin="2"/>
+                </ToggleButton>
+                <TextBlock Text="{Binding TaskTimer.ElapsedTime, StringFormat=hh\\:mm}"
+                           MinWidth="40"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button ToolTip="Add" Width="25" Height="25" 
+                        Command="{Binding AddCommand}">
+                    <Image Source="/TimeTracker;component/Resources/addIcon.png"
+                           Margin="2"/>
+                </Button>
+                <Button ToolTip="Delete" Width="25" Height="25" 
+                        Command="{Binding DeleteCommand}">
+                    <Image Source="/TimeTracker;component/Resources/cancelIcon.png"
+                           Margin="2"/>
+                </Button>
+                <Button ToolTip="Edit" Width="25" Height="25" 
+                        Command="{Binding EditCommand}">
+                    <Image Source="/TimeTracker;component/Resources/editIcon.png"
+                           Margin="2"/>
+                </Button>
+            </StackPanel>
         </DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button ToolTip="Add" Width="25" Height="25" 
-                    Command="{Binding AddCommand}">
-                <Image Source="/TimeTracker;component/Resources/addIcon.png"
-                       Margin="2"/>
-            </Button>
-            <Button ToolTip="Delete" Width="25" Height="25" 
-                    Command="{Binding DeleteCommand}">
-                <Image Source="/TimeTracker;component/Resources/cancelIcon.png"
-                       Margin="2"/>
-            </Button>
-            <Button ToolTip="Edit" Width="25" Height="25" 
-                    Command="{Binding EditCommand}">
-                <Image Source="/TimeTracker;component/Resources/editIcon.png"
-                       Margin="2"/>
-            </Button>
-        </StackPanel>
         <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="LightBlue" Margin="2.5" Padding="2.5"
                 Visibility="{Binding Path=IsEditing, Converter={StaticResource BooleanToVisibility}}">
             <Grid>
@@ -84,14 +78,7 @@
                     <Border BorderThickness="0.5"
                             Margin="2,1,2,1">
                         <Border.BorderBrush>
-                            <SolidColorBrush>
-                                <SolidColorBrush.Color>
-                                    <MultiBinding Converter="{StaticResource EqualityToColorConverter}">
-                                        <Binding/>
-                                        <Binding RelativeSource="{RelativeSource Findancestor, AncestorType={x:Type UserControl}}" Path="DataContext.ActiveTask"/>
-                                    </MultiBinding>
-                                </SolidColorBrush.Color>
-                            </SolidColorBrush>
+                            <SolidColorBrush Color="{Binding Path=IsActive, Converter={StaticResource IsActiveToColorConverter}}"/>
                         </Border.BorderBrush>
                     <Grid>
                         <Grid.ColumnDefinitions>
