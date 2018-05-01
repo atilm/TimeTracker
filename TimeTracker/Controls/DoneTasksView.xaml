@@ -30,6 +30,10 @@
         </StackPanel>
         <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="LightBlue" Margin="2.5" Padding="2.5"
                 Visibility="{Binding Path=IsEditing, Converter={StaticResource BooleanToVisibility}}">
+            <Border.InputBindings>
+                <KeyBinding Key="Return" Command="{Binding AcceptEditingCommand}"/>
+                <KeyBinding Key="Esc" Command="{Binding CancelEditingCommand}"/>
+            </Border.InputBindings>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -45,7 +49,9 @@
                           SelectedItem="{Binding EditingTask.Project}"
                           DisplayMemberPath="Name"/>
                 <TextBlock Text="Task Name:" Grid.Row="1"/>
-                <local:ClickSelectTextBox Grid.Row="1" Grid.Column="2" Text="{Binding Path=EditingTask.Name, Mode=TwoWay}"/>
+                <local:ClickSelectTextBox 
+                    Grid.Row="1" Grid.Column="2" 
+                     Text="{Binding Path=EditingTask.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
                     <Button Content="OK" MinWidth="75" Command="{Binding AcceptEditingCommand}"/>
                     <Button Content="Cancel" MinWidth="75" Command="{Binding CancelEditingCommand}"/>
