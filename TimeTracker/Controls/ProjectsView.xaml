@@ -50,7 +50,12 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <ListView ItemsSource="{Binding Projects}" SelectedItem="{Binding CurrentProject}" IsEnabled="{Binding IsNotEditing}">
+        <ListView 
+            ItemsSource="{Binding Projects}"
+            SelectedItem="{Binding CurrentProject}"
+            IsEnabled="{Binding IsNotEditing}"
+            HorizontalContentAlignment="Stretch"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0.5"
@@ -63,18 +68,19 @@
                             </Grid.ColumnDefinitions>
                             <CheckBox IsChecked="{Binding IsActive}" VerticalAlignment="Center" Margin="5"/>
                             <StackPanel Grid.Column="1" Margin="5" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="DemiBold" HorizontalAlignment="Stretch"/>
-                                <TextBlock Text="{Binding ProjectNumber}" FontSize="12"/>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="14"
+                                           FontWeight="DemiBold" 
+                                           HorizontalAlignment="Stretch"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding ProjectNumber}"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
         </ListView>
     </DockPanel>
 </UserControl>

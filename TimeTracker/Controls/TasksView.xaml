@@ -72,7 +72,9 @@
                   ItemsSource="{Binding Path=Tasks}"
                   SelectedItem="{Binding Path=CurrentTask}"
                   MouseDoubleClick="ListView_MouseDoubleClick"
-                  IsEnabled="{Binding IsNotEditing}">
+                  IsEnabled="{Binding IsNotEditing}"
+                  HorizontalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0.5"
@@ -80,25 +82,22 @@
                         <Border.BorderBrush>
                             <SolidColorBrush Color="{Binding Path=IsActive, Converter={StaticResource IsActiveToColorConverter}}"/>
                         </Border.BorderBrush>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center" Margin="5"/>
-                        <StackPanel Grid.Column="1" Margin="5">
-                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="DemiBold"/>
-                            <TextBlock Text="{Binding Project.Name}" FontSize="12"/>
-                        </StackPanel>
-                    </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox IsChecked="{Binding IsDone}" VerticalAlignment="Center" Margin="5"/>
+                            <StackPanel Grid.Column="1" Margin="5">
+                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="DemiBold"
+                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Project.Name}" FontSize="12"
+                                       TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
         </ListView>
     </DockPanel>
 </UserControl>
