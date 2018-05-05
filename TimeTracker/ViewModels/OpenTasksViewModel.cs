@@ -84,24 +84,9 @@ namespace TimeTracker.ViewModels
             get { return activeTask; }
             set
             {
-                SwitchActiveTaskTo(value);
                 SetProperty(ref activeTask, value);
                 RaisePropertyChanged(nameof(IsActiveTaskSelected));
             }
-        }
-
-        private void SwitchActiveTaskTo(TaskVM value)
-        {
-            if(activeTask != null)
-                activeTask.IsActive = false;
-
-            if(value != null)
-                value.IsActive = true;
-        }
-
-        public bool IsActiveTaskSelected
-        {
-            get { return ActiveTask != null; }
         }
 
         public void SwitchActiveTask(TaskVM task)
@@ -111,7 +96,24 @@ namespace TimeTracker.ViewModels
                 AddRecord();
             }
 
-            ActiveTask = task;
+            var taskInList = Tasks.FirstOrDefault(t => t.Id == task.Id);
+
+            SwitchActiveFlags(taskInList);
+            ActiveTask = taskInList;
+        }
+
+        private void SwitchActiveFlags(TaskVM value)
+        {
+            if(ActiveTask != null)
+                ActiveTask.IsActive = false;
+
+            if(value != null)
+                value.IsActive = true;
+        }
+
+        public bool IsActiveTaskSelected
+        {
+            get { return ActiveTask != null; }
         }
 
         internal void OnClosing()

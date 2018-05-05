@@ -11,11 +11,11 @@ namespace TimeTracker.Converters
                object parameter, CultureInfo culture)
         {
             if (!(value is bool isActive))
-                return inactiveColor;
+                return inactiveColorBrush;
 
             return isActive ?
-                activeColor :
-                inactiveColor;
+                activeColorBrush :
+                inactiveColorBrush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -23,7 +23,7 @@ namespace TimeTracker.Converters
             return Binding.DoNothing;
         }
 
-        private readonly Color inactiveColor = Color.FromRgb(211, 211, 211);
-        private readonly Color activeColor = Color.FromRgb(220, 20, 60);
+        private readonly SolidColorBrush inactiveColorBrush = new SolidColorBrush(Color.FromRgb(211, 211, 211));
+        private readonly SolidColorBrush activeColorBrush = new SolidColorBrush(Color.FromRgb(220, 20, 60));
     }
 }
